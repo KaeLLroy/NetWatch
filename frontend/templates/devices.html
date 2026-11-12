@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <span class="muted">Safe discovery uses ICMP echo and the Windows neighbor cache. No packet payloads are collected.</span>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="devices-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Refresh
+    </button>
+    <button class="btn btn-primary" type="button" id="open-scan-dialog">
+      <svg class="icon" aria-hidden="true"><use href="#i-scan"></use></svg> Scan local network
+    </button>
+  </div>
+</div>
+
+<div class="notice notice-warning">
+  <svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+  <div><strong>Authorization required</strong><p>Scan only networks you own or have explicit permission to assess. Discovery is limited to the private IPv4 subnet of the selected adapter and never probes ports or captures traffic.</p></div>
+</div>
+
+<section class="kpi-grid" aria-label="Device summary">
+  <div class="card metric-card accent-cyan"><div class="metric-top"><span class="metric-label">Known devices</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-devices"></use></svg></span></div><div class="metric-value"><span id="devices-known">0</span><span class="metric-unit">devices</span></div><div class="metric-foot"><span class="muted">Persisted in SQLite</span></div></div>
+  <div class="card metric-card accent-green"><div class="metric-top"><span class="metric-label">Online last scan</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-link"></use></svg></span></div><div class="metric-value"><span id="devices-online">0</span><span class="metric-unit">active</span></div><div class="metric-foot"><span class="muted">Responded or in ARP cache</span></div></div>
+  <div class="card metric-card accent-violet"><div class="metric-top"><span class="metric-label">Last discovery</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg></span></div><div class="metric-value metric-value-sm"><span id="devices-last-scan">Never</span></div><div class="metric-foot"><span class="muted" id="devices-last-scan-abs">No scan recorded</span></div></div>
+  <div class="card metric-card accent-amber"><div class="metric-top"><span class="metric-label">Current network</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-router"></use></svg></span></div><div class="metric-value metric-value-sm"><span id="devices-network" class="mono">—</span></div><div class="metric-foot"><span class="muted" id="devices-interface">Selected adapter</span></div></div>
+</section>
+
+<article class="card scan-progress-card" id="scan-progress-card" hidden>
+  <div class="scan-progress-head">
+    <div><h2 id="scan-phase">Scanning local subnet…</h2><p id="scan-detail">Preparing discovery…</p></div>
+    <span class="chip chip-live"><span class="status-dot"></span> Running</span>
+  </div>
+  <div class="progress-track"><span class="progress-bar" id="scan-progress-bar" style="width:0%"></span></div>
+</article>
+
+<article class="card">
+  <div class="card-header">
+    <div><h2>Discovered devices</h2><p id="device-table-subtitle">Persisted discovery results</p></div>
+    <div class="table-tools">
+      <label class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><input type="search" id="device-search" placeholder="Search IP, MAC, hostname" aria-label="Search devices"></label>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Status</th><th>IP address</th><th>MAC address</th><th>Hostname</th><th>Interface</th><th>First seen</th><th>Last seen</th><th></th></tr></thead>
+      <tbody id="device-table-body"><tr><td colspan="8" class="table-empty">Loading device inventory…</td></tr></tbody>
+    </table>
+  </div>
+</article>
+
+<dialog class="dialog dialog-wide" id="device-scan-dialog" aria-labelledby="scan-dialog-title">
+  <div class="dialog-icon"><svg class="icon" aria-hidden="true"><use href="#i-scan"></use></svg></div>
+  <h2 id="scan-dialog-title">Authorized local discovery</h2>
+  <p>NetWatch will send one ICMP echo request to each host on <strong id="scan-target-network">the local subnet</strong> and read the Windows neighbor cache to resolve MAC addresses. No ports are scanned and no payloads are captured.</p>
+  <label class="consent-row"><input type="checkbox" id="scan-consent"> <span>I own this network or have explicit authorization to scan it.</span></label>
+  <div class="dialog-actions">
+    <button class="btn btn-ghost" type="button" id="scan-cancel">Cancel</button>
+    <button class="btn btn-primary" type="button" id="scan-start" disabled>Start discovery</button>
+  </div>
+</dialog>
+
+<dialog class="dialog dialog-wide" id="device-history-dialog" aria-labelledby="history-dialog-title">
+  <div class="dialog-head-row">
+    <div><span class="eyebrow">Device history</span><h2 id="history-dialog-title">Device</h2><p class="mono" id="history-device-meta">—</p></div>
+    <button class="icon-button" type="button" id="history-close" aria-label="Close history"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button>
+  </div>
+  <div class="history-chart-wrap"><canvas id="device-history-chart" aria-label="Device online history chart" role="img"></canvas></div>
+  <div class="table-wrap">
+    <table class="data-table compact"><thead><tr><th>Scan time</th><th>Result</th></tr></thead><tbody id="device-history-body"></tbody></table>
+  </div>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/devices.js') }}"></script>{% endblock %}

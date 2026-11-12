@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <span class="muted">Tools run fixed Windows commands with validated targets, strict timeouts, and no shell execution.</span>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="diagnostics-clear">
+      <svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg> Clear results
+    </button>
+  </div>
+</div>
+
+<article class="card target-card">
+  <div class="target-row">
+    <div class="target-copy">
+      <span class="eyebrow">Diagnostic target</span>
+      <h2>Hostname or IP address</h2>
+      <p>Used by ping, DNS, and traceroute. Input is validated before any command runs.</p>
+    </div>
+    <div class="target-input-wrap">
+      <label class="input-with-icon">
+        <svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>
+        <input type="text" id="diag-target" value="1.1.1.1" maxlength="253" spellcheck="false" autocomplete="off" aria-label="Diagnostic target">
+      </label>
+      <div class="quick-targets" aria-label="Suggested targets">
+        <button type="button" class="chip-button" data-target="1.1.1.1">1.1.1.1</button>
+        <button type="button" class="chip-button" data-target="8.8.8.8">8.8.8.8</button>
+        <button type="button" class="chip-button" data-target="www.microsoft.com">microsoft.com</button>
+        <button type="button" class="chip-button" data-target="localhost">localhost</button>
+      </div>
+    </div>
+  </div>
+</article>
+
+<div class="diagnostic-grid">
+  <article class="card diagnostic-card" id="ping-card">
+    <div class="card-header">
+      <div class="diagnostic-title"><span class="tool-icon cyan"><svg class="icon" aria-hidden="true"><use href="#i-activity"></use></svg></span><div><h2>Ping test</h2><p>Four ICMP echo requests</p></div></div>
+      <button class="btn btn-primary btn-sm" type="button" data-run="ping">Run ping</button>
+    </div>
+    <div class="diagnostic-result" id="ping-result">
+      <div class="empty-state compact-empty"><p>Run a ping to measure reachability and latency.</p></div>
+    </div>
+    <pre class="terminal" id="ping-output" hidden></pre>
+  </article>
+
+  <article class="card diagnostic-card" id="dns-card">
+    <div class="card-header">
+      <div class="diagnostic-title"><span class="tool-icon violet"><svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg></span><div><h2>DNS lookup</h2><p>Resolve records through the system resolver</p></div></div>
+      <div class="button-row"><select class="select select-sm" id="dns-record-type" aria-label="DNS record type"><option>A</option><option>AAAA</option><option>CNAME</option><option>MX</option><option>NS</option><option>TXT</option></select><button class="btn btn-primary btn-sm" type="button" data-run="dns">Resolve</button></div>
+    </div>
+    <div class="diagnostic-result" id="dns-result"><div class="empty-state compact-empty"><p>Resolve a hostname to inspect its DNS records.</p></div></div>
+  </article>
+
+  <article class="card diagnostic-card" id="trace-card">
+    <div class="card-header">
+      <div class="diagnostic-title"><span class="tool-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-router"></use></svg></span><div><h2>Traceroute</h2><p>Up to 20 hops with reverse lookup disabled</p></div></div>
+      <button class="btn btn-primary btn-sm" type="button" data-run="traceroute">Trace route</button>
+    </div>
+    <div class="diagnostic-result" id="trace-result"><div class="empty-state compact-empty"><p>Trace the path packets take to the target.</p></div></div>
+    <pre class="terminal" id="trace-output" hidden></pre>
+  </article>
+
+  <article class="card diagnostic-card" id="connectivity-card">
+    <div class="card-header">
+      <div class="diagnostic-title"><span class="tool-icon green"><svg class="icon" aria-hidden="true"><use href="#i-wifi"></use></svg></span><div><h2>Connectivity test</h2><p>Independent TCP and DNS reachability checks</p></div></div>
+      <button class="btn btn-primary btn-sm" type="button" data-run="connectivity">Test internet</button>
+    </div>
+    <div class="diagnostic-result" id="connectivity-result"><div class="empty-state compact-empty"><p>Test outbound connectivity against independent targets.</p></div></div>
+  </article>
+</div>
+
+<div class="notice notice-info">
+  <svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+  <div><strong>Execution safety</strong><p>Only the fixed arguments <code>ping</code>, <code>tracert</code>, and <code>arp</code> are invoked through an argument array. The target must match a strict hostname or IP pattern, and every subprocess has a hard timeout.</p></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/diagnostics.js') }}"></script>{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <div class="segmented" role="group" aria-label="Alert filter" id="alert-filter">
+      <button type="button" data-filter="all" class="is-active">All alerts</button>
+      <button type="button" data-filter="unread">Unread</button>
+    </div>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="alerts-ack-all">
+      <svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg> Mark all read
+    </button>
+    <button class="btn btn-danger-ghost" type="button" id="alerts-clear">
+      <svg class="icon" aria-hidden="true"><use href="#i-trash"></use></svg> Clear history
+    </button>
+  </div>
+</div>
+
+<section class="summary-strip" aria-label="Alert summary">
+  <div class="summary-item"><span class="summary-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-alerts"></use></svg></span><div><span>Unread</span><strong id="alerts-unread-count">0</strong></div></div>
+  <div class="summary-item"><span class="summary-icon red"><svg class="icon" aria-hidden="true"><use href="#i-warning"></use></svg></span><div><span>Critical</span><strong id="alerts-critical-count">0</strong></div></div>
+  <div class="summary-item"><span class="summary-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-activity"></use></svg></span><div><span>Warnings</span><strong id="alerts-warning-count">0</strong></div></div>
+  <div class="summary-item"><span class="summary-icon cyan"><svg class="icon" aria-hidden="true"><use href="#i-info"></use></svg></span><div><span>Informational</span><strong id="alerts-info-count">0</strong></div></div>
+</section>
+
+<article class="card">
+  <div class="card-header">
+    <div><h2>Event timeline</h2><p id="alerts-subtitle">Newest events first</p></div>
+    <span class="chip" id="alerts-total-chip">0 events</span>
+  </div>
+  <div class="alert-timeline" id="alerts-list" aria-live="polite">
+    <div class="skeleton-row"></div><div class="skeleton-row"></div>
+  </div>
+</article>
+
+<div class="notice notice-info">
+  <svg class="icon" aria-hidden="true"><use href="#i-info"></use></svg>
+  <div><strong>How alerts work</strong><p>Connectivity transitions, adapter availability, and speed thresholds generate alerts in real time. Threshold alerts respect the configured cooldown to avoid notification storms.</p></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/alerts.js') }}"></script>{% endblock %}

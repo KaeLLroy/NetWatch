@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <div class="segmented segmented-lg" role="group" aria-label="Analytics range" id="analytics-range">
+      <button type="button" data-days="7" class="is-active">7 days</button>
+      <button type="button" data-days="30">30 days</button>
+      <button type="button" data-days="90">90 days</button>
+    </div>
+  </div>
+  <div class="toolbar-actions">
+    <a class="btn btn-ghost" href="/api/traffic/export.csv?days=30" id="analytics-export">
+      <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg> Export traffic
+    </a>
+    <button class="btn btn-ghost" type="button" id="analytics-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Refresh
+    </button>
+  </div>
+</div>
+
+<section class="kpi-grid kpi-grid-five" aria-label="Analytics summary">
+  <article class="card metric-card accent-cyan"><div class="metric-top"><span class="metric-label">Average download</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg></span></div><div class="metric-value"><span id="analytics-avg-down">0.00</span><span class="metric-unit" id="analytics-avg-down-unit">Mbps</span></div><div class="metric-foot"><span class="muted" id="analytics-range-label">Last 7 days</span></div></article>
+  <article class="card metric-card accent-violet"><div class="metric-top"><span class="metric-label">Average upload</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg></span></div><div class="metric-value"><span id="analytics-avg-up">0.00</span><span class="metric-unit" id="analytics-avg-up-unit">Mbps</span></div><div class="metric-foot"><span class="muted">Mean over the period</span></div></article>
+  <article class="card metric-card accent-green"><div class="metric-top"><span class="metric-label">Downloaded</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow-down"></use></svg></span></div><div class="metric-value"><span id="analytics-total-down">0</span><span class="metric-unit" id="analytics-total-down-unit">B</span></div><div class="metric-foot"><span class="muted">Recorded in period</span></div></article>
+  <article class="card metric-card accent-amber"><div class="metric-top"><span class="metric-label">Uploaded</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg></span></div><div class="metric-value"><span id="analytics-total-up">0</span><span class="metric-unit" id="analytics-total-up-unit">B</span></div><div class="metric-foot"><span class="muted">Recorded in period</span></div></article>
+  <article class="card metric-card accent-teal"><div class="metric-top"><span class="metric-label">Internet uptime</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg></span></div><div class="metric-value"><span id="analytics-uptime">—</span><span class="metric-unit">%</span></div><div class="metric-foot"><span class="muted" id="analytics-uptime-samples">No checks recorded</span></div></article>
+</section>
+
+<div class="content-grid content-grid-wide">
+  <article class="card chart-card">
+    <div class="card-header"><div><h2>Bandwidth trend</h2><p>Hourly average throughput on the monitored interface</p></div><span class="chip" id="analytics-interface-chip">—</span></div>
+    <div class="chart-wrap chart-lg"><canvas id="analytics-bandwidth-chart" aria-label="Historical bandwidth trend chart" role="img"></canvas></div>
+    <div class="chart-legend"><span><i class="legend-line cyan"></i> Download</span><span><i class="legend-line violet"></i> Upload</span></div>
+  </article>
+  <article class="card chart-card">
+    <div class="card-header"><div><h2>Connectivity</h2><p>Internet checks in period</p></div></div>
+    <div class="chart-wrap chart-donut"><canvas id="uptime-chart" aria-label="Internet uptime chart" role="img"></canvas>
+      <div class="donut-center"><strong id="uptime-center">—</strong><span>uptime</span></div>
+    </div>
+  </article>
+</div>
+
+<div class="content-grid content-grid-wide">
+  <article class="card chart-card">
+    <div class="card-header"><div><h2>Daily transfer</h2><p>Aggregated bytes across recorded interfaces</p></div></div>
+    <div class="chart-wrap chart-md"><canvas id="analytics-daily-chart" aria-label="Daily traffic bar chart" role="img"></canvas></div>
+  </article>
+  <article class="card chart-card">
+    <div class="card-header"><div><h2>Device discovery</h2><p>Unique responsive devices per day</p></div></div>
+    <div class="chart-wrap chart-md"><canvas id="discovery-chart" aria-label="Device discovery history chart" role="img"></canvas></div>
+  </article>
+</div>
+
+<div class="content-grid content-grid-wide">
+  <article class="card">
+    <div class="card-header"><div><h2>Interface usage</h2><p>Recorded transfer by adapter in period</p></div></div>
+    <div class="table-wrap">
+      <table class="data-table"><thead><tr><th>Interface</th><th class="num">Downloaded</th><th class="num">Uploaded</th><th class="num">Peak down</th></tr></thead><tbody id="interface-usage-body"><tr><td colspan="4" class="table-empty">No interface data.</td></tr></tbody></table>
+    </div>
+  </article>
+  <article class="card">
+    <div class="card-header"><div><h2>Alert breakdown</h2><p>Events raised in period</p></div></div>
+    <div class="breakdown-list" id="alert-breakdown"><div class="empty-state compact-empty"><p>No alerts recorded.</p></div></div>
+  </article>
+</div>
+
+<article class="card">
+  <div class="card-header"><div><h2>Weekly summary</h2><p>Seven-day operational totals and peaks</p></div><span class="chip" id="weekly-total-chip">—</span></div>
+  <div class="table-wrap">
+    <table class="data-table"><thead><tr><th>Date</th><th class="num">Downloaded</th><th class="num">Uploaded</th><th class="num">Peak download</th><th class="num">Peak upload</th><th class="num">Samples</th></tr></thead><tbody id="weekly-body"><tr><td colspan="6" class="table-empty">No weekly data.</td></tr></tbody></table>
+  </div>
+</article>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>{% endblock %}

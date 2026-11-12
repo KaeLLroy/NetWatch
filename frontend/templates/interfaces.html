@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <span class="muted">Adapter selection controls live monitoring, traffic charts, discovery, and alerts.</span>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="interfaces-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Rescan adapters
+    </button>
+  </div>
+</div>
+
+<section class="summary-strip" aria-label="Interface summary">
+  <div class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#i-interfaces"></use></svg></span><div><span>Detected</span><strong id="interface-count">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon green"><svg class="icon" aria-hidden="true"><use href="#i-link"></use></svg></span><div><span>Operational</span><strong id="interface-up-count">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon cyan"><svg class="icon" aria-hidden="true"><use href="#i-router"></use></svg></span><div><span>Primary adapter</span><strong id="primary-interface">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-database"></use></svg></span><div><span>Interface traffic</span><strong id="interface-total">—</strong></div></div>
+</section>
+
+<div class="interface-grid" id="interface-grid" aria-live="polite">
+  <div class="card skeleton-card"></div>
+  <div class="card skeleton-card"></div>
+  <div class="card skeleton-card"></div>
+</div>
+
+<div class="notice notice-info">
+  <svg class="icon" aria-hidden="true"><use href="#i-info"></use></svg>
+  <div><strong>Selection behavior</strong><p>Choosing an adapter resets the rate baseline so the first sample is not distorted. Historical data remains available for every interface. “Automatic” follows the adapter Windows uses for outbound traffic.</p></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/interfaces.js') }}"></script>{% endblock %}

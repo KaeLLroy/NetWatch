@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <span class="live-pill"><span class="status-dot" data-state="online"></span> TCP session table</span>
+    <label class="switch-inline"><span class="switch"><input type="checkbox" id="auto-refresh" checked><span class="switch-track"></span></span> Auto-refresh</label>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="connections-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Refresh now
+    </button>
+  </div>
+</div>
+
+<div class="notice notice-warning" id="connections-restricted" hidden>
+  <svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+  <div><strong>Limited visibility</strong><p id="connections-restricted-message">Windows denied access to some connection details. Run NetWatch from an elevated terminal for process attribution.</p></div>
+</div>
+
+<section class="summary-strip" aria-label="Connection summary">
+  <div class="summary-item"><span class="summary-icon green"><svg class="icon" aria-hidden="true"><use href="#i-link"></use></svg></span><div><span>Established</span><strong id="connections-established">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon cyan"><svg class="icon" aria-hidden="true"><use href="#i-server"></use></svg></span><div><span>Listening</span><strong id="connections-listening">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg></span><div><span>Time wait</span><strong id="connections-timewait">—</strong></div></div>
+  <div class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#i-connections"></use></svg></span><div><span>Visible total</span><strong id="connections-total">—</strong></div></div>
+</section>
+
+<article class="card">
+  <div class="card-header">
+    <div><h2>Active TCP connections</h2><p id="connections-subtitle">Local and remote endpoints with owning processes</p></div>
+    <div class="table-tools">
+      <select class="select select-sm" id="connection-state" aria-label="Filter by connection state">
+        <option value="all">All states</option>
+        <option value="ESTABLISHED">Established</option>
+        <option value="LISTEN">Listening</option>
+        <option value="TIME_WAIT">Time wait</option>
+        <option value="CLOSE_WAIT">Close wait</option>
+        <option value="SYN_SENT">Syn sent</option>
+      </select>
+      <label class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><input type="search" id="connection-search" placeholder="Search process, IP, port" aria-label="Search connections"></label>
+    </div>
+  </div>
+  <div class="table-wrap table-tall">
+    <table class="data-table">
+      <thead><tr><th>Process</th><th class="num">PID</th><th>Local endpoint</th><th>Remote endpoint</th><th>State</th><th>Family</th></tr></thead>
+      <tbody id="connection-table-body"><tr><td colspan="6" class="table-empty">Loading connection table…</td></tr></tbody>
+    </table>
+  </div>
+  <div class="card-footnote"><span id="connections-updated">—</span><span>Process names may be unavailable for protected Windows services.</span></div>
+</article>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/connections.js') }}"></script>{% endblock %}

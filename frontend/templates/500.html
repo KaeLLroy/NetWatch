@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="error-page">
+  <span class="error-code">500</span>
+  <h2>The monitoring service encountered an error.</h2>
+  <p>Details were written to <code>logs/netwatch.log</code>. The monitoring engine continues running where possible.</p>
+  <a class="btn btn-primary" href="{{ url_for('views.dashboard') }}"><svg class="icon" aria-hidden="true"><use href="#i-dashboard"></use></svg> Back to overview</a>
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+# NetWatch — development and quality tooling.
+-r requirements.txt
+
+pytest>=8.4,<10.0
+pytest-cov>=7.0,<8.0
+ruff>=0.14,<1.0
+mypy>=1.19,<2.0
+types-psutil>=7.1

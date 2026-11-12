@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# Test / lint / type caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Local environment and secrets
+.env
+.env.*
+
+# Runtime data and logs
+data/*
+!data/.gitkeep
+logs/*
+!logs/.gitkeep
+*.log
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# Editors and OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+Desktop.ini

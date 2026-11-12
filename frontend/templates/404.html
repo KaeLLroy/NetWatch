@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="error-page">
+  <span class="error-code">404</span>
+  <h2>The requested page is not part of this console.</h2>
+  <p>Check the address or return to the network overview.</p>
+  <a class="btn btn-primary" href="{{ url_for('views.dashboard') }}"><svg class="icon" aria-hidden="true"><use href="#i-dashboard"></use></svg> Back to overview</a>
+</section>
+{% endblock %}

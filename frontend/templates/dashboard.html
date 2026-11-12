@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <span class="live-pill"><span class="status-dot" data-state="online"></span> Live telemetry</span>
+    <span class="muted">Last sample <span id="last-sample">—</span></span>
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" type="button" id="dashboard-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Refresh
+    </button>
+    <a class="btn btn-primary" href="{{ url_for('views.diagnostics_page') }}">
+      <svg class="icon" aria-hidden="true"><use href="#i-diagnostics"></use></svg> Run diagnostics
+    </a>
+  </div>
+</div>
+
+<section class="kpi-grid" aria-label="Live traffic summary">
+  <article class="card metric-card accent-cyan">
+    <div class="metric-top">
+      <span class="metric-label">Download</span>
+      <span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg></span>
+    </div>
+    <div class="metric-value"><span id="metric-download">0.00</span><span class="metric-unit">Mbps</span></div>
+    <div class="metric-foot">
+      <span class="trend" id="trend-download"><svg class="icon" aria-hidden="true"><use href="#i-activity"></use></svg> Live</span>
+      <span class="muted" id="download-context">Current throughput</span>
+    </div>
+  </article>
+  <article class="card metric-card accent-violet">
+    <div class="metric-top">
+      <span class="metric-label">Upload</span>
+      <span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg></span>
+    </div>
+    <div class="metric-value"><span id="metric-upload">0.00</span><span class="metric-unit">Mbps</span></div>
+    <div class="metric-foot">
+      <span class="trend" id="trend-upload"><svg class="icon" aria-hidden="true"><use href="#i-activity"></use></svg> Live</span>
+      <span class="muted">Current throughput</span>
+    </div>
+  </article>
+  <article class="card metric-card accent-green">
+    <div class="metric-top">
+      <span class="metric-label">Downloaded today</span>
+      <span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow-down"></use></svg></span>
+    </div>
+    <div class="metric-value"><span id="metric-downloaded">0</span><span class="metric-unit" id="unit-downloaded">B</span></div>
+    <div class="metric-foot"><span class="muted" id="downloaded-context">Current interface</span></div>
+  </article>
+  <article class="card metric-card accent-amber">
+    <div class="metric-top">
+      <span class="metric-label">Uploaded today</span>
+      <span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg></span>
+    </div>
+    <div class="metric-value"><span id="metric-uploaded">0</span><span class="metric-unit" id="unit-uploaded">B</span></div>
+    <div class="metric-foot"><span class="muted" id="uploaded-context">Current interface</span></div>
+  </article>
+</section>
+
+<div class="content-grid content-grid-wide">
+  <article class="card chart-card">
+    <div class="card-header">
+      <div>
+        <h2>Live bandwidth</h2>
+        <p>Real adapter throughput sampled every <span id="chart-interval">2</span> seconds</p>
+      </div>
+      <div class="segmented" id="live-range" role="group" aria-label="Live chart window">
+        <button type="button" data-points="30">1m</button>
+        <button type="button" data-points="90">3m</button>
+        <button type="button" data-points="300" class="is-active">10m</button>
+      </div>
+    </div>
+    <div class="chart-wrap chart-lg"><canvas id="live-chart" aria-label="Live download and upload bandwidth chart" role="img"></canvas></div>
+    <div class="chart-legend">
+      <span><i class="legend-line cyan"></i> Download</span>
+      <span><i class="legend-line violet"></i> Upload</span>
+      <span class="chart-note" id="chart-interface">—</span>
+    </div>
+  </article>
+
+  <aside class="card status-card">
+    <div class="card-header">
+      <div><h2>Link status</h2><p>Current connection snapshot</p></div>
+      <span class="chip" id="connection-chip"><span class="status-dot"></span> Checking</span>
+    </div>
+    <dl class="detail-list">
+      <div><dt>Interface</dt><dd id="detail-interface">—</dd></div>
+      <div><dt>Local IPv4</dt><dd class="mono" id="detail-local-ip">—</dd></div>
+      <div><dt>Public IPv4</dt><dd class="mono" id="detail-public-ip">—</dd></div>
+      <div><dt>Internet</dt><dd><span class="status-inline" id="detail-internet"><span class="status-dot"></span> Checking</span></dd></div>
+      <div><dt>Link speed</dt><dd id="detail-link-speed">—</dd></div>
+      <div><dt>Latency</dt><dd id="detail-latency">—</dd></div>
+      <div><dt>System uptime</dt><dd id="detail-uptime">—</dd></div>
+      <div><dt>Hostname</dt><dd id="detail-hostname">—</dd></div>
+    </dl>
+  </aside>
+</div>
+
+<div class="content-grid content-grid-wide">
+  <article class="card">
+    <div class="card-header">
+      <div><h2>Adapter activity</h2><p>Detected interfaces and recorded totals</p></div>
+      <a class="text-link" href="{{ url_for('views.interfaces_page') }}">Manage interfaces <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+    </div>
+    <div class="adapter-list" id="dashboard-interfaces">
+      <div class="skeleton-row"></div><div class="skeleton-row"></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="card-header">
+      <div><h2>Recent alerts</h2><p>Latest operational events</p></div>
+      <a class="text-link" href="{{ url_for('views.alerts_page') }}">Alert center <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+    </div>
+    <div class="alert-mini-list" id="dashboard-alerts">
+      <div class="skeleton-row"></div>
+    </div>
+  </article>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

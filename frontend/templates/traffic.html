@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-toolbar">
+  <div class="toolbar-meta">
+    <div class="segmented segmented-lg" role="group" aria-label="Traffic range" id="traffic-range">
+      <button type="button" data-range="1h">1H</button>
+      <button type="button" data-range="6h">6H</button>
+      <button type="button" data-range="24h" class="is-active">24H</button>
+      <button type="button" data-range="7d">7D</button>
+      <button type="button" data-range="30d">30D</button>
+    </div>
+    <select class="select" id="traffic-interface" aria-label="Traffic interface"></select>
+  </div>
+  <div class="toolbar-actions">
+    <a class="btn btn-ghost" href="/api/traffic/export.csv?days=30" id="export-traffic">
+      <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg> Export CSV
+    </a>
+    <button class="btn btn-ghost" type="button" id="traffic-refresh">
+      <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg> Refresh
+    </button>
+  </div>
+</div>
+
+<section class="kpi-grid" aria-label="Traffic summary">
+  <article class="card metric-card accent-cyan">
+    <div class="metric-top"><span class="metric-label">Current download</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg></span></div>
+    <div class="metric-value"><span id="traffic-down">0.00</span><span class="metric-unit">Mbps</span></div>
+    <div class="metric-foot"><span class="muted">Live adapter rate</span></div>
+  </article>
+  <article class="card metric-card accent-violet">
+    <div class="metric-top"><span class="metric-label">Current upload</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg></span></div>
+    <div class="metric-value"><span id="traffic-up">0.00</span><span class="metric-unit">Mbps</span></div>
+    <div class="metric-foot"><span class="muted">Live adapter rate</span></div>
+  </article>
+  <article class="card metric-card accent-green">
+    <div class="metric-top"><span class="metric-label">Transferred in range</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-traffic"></use></svg></span></div>
+    <div class="metric-value"><span id="traffic-total">0</span><span class="metric-unit" id="traffic-total-unit">B</span></div>
+    <div class="metric-foot"><span class="muted" id="traffic-range-label">Last 24 hours</span></div>
+  </article>
+  <article class="card metric-card accent-amber">
+    <div class="metric-top"><span class="metric-label">Peak download</span><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-activity"></use></svg></span></div>
+    <div class="metric-value"><span id="traffic-peak">0.00</span><span class="metric-unit">Mbps</span></div>
+    <div class="metric-foot"><span class="muted">Highest averaged bucket</span></div>
+  </article>
+</section>
+
+<article class="card chart-card">
+  <div class="card-header">
+    <div><h2>Bandwidth history</h2><p id="traffic-chart-subtitle">Download and upload throughput</p></div>
+    <span class="chip" id="traffic-sample-chip">—</span>
+  </div>
+  <div class="chart-wrap chart-xl"><canvas id="traffic-chart" aria-label="Historical bandwidth chart" role="img"></canvas></div>
+  <div class="chart-legend"><span><i class="legend-line cyan"></i> Download</span><span><i class="legend-line violet"></i> Upload</span></div>
+</article>
+
+<div class="content-grid content-grid-wide">
+  <article class="card chart-card">
+    <div class="card-header"><div><h2>Daily transfer</h2><p>Downloaded and uploaded bytes per day</p></div></div>
+    <div class="chart-wrap chart-md"><canvas id="daily-chart" aria-label="Daily transfer bar chart" role="img"></canvas></div>
+  </article>
+  <article class="card">
+    <div class="card-header"><div><h2>Period totals</h2><p>Recorded transfer on this interface</p></div></div>
+    <div class="period-list">
+      <div><span>Today</span><strong id="period-today">—</strong></div>
+      <div><span>Last 7 days</span><strong id="period-week">—</strong></div>
+      <div><span>Last 30 days</span><strong id="period-month">—</strong></div>
+      <div><span>All recorded</span><strong id="period-lifetime">—</strong></div>
+    </div>
+  </article>
+</div>
+
+<article class="card">
+  <div class="card-header"><div><h2>Daily statistics</h2><p>Persisted traffic aggregates, independent of raw-sample retention</p></div></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Date</th><th class="num">Downloaded</th><th class="num">Uploaded</th><th class="num">Peak down</th><th class="num">Peak up</th><th class="num">Samples</th></tr></thead>
+      <tbody id="daily-table-body"><tr><td colspan="6" class="table-empty">Loading daily statistics…</td></tr></tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/traffic.js') }}"></script>{% endblock %}
